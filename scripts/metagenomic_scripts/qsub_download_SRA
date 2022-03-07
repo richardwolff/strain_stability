@@ -1,0 +1,12 @@
+#!/bin/bash
+#$ -N SRA_download_Poyet
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -cwd 
+#$ -l h_data=8G
+#$ -l time=22:00:00
+#$ -t 1:405
+
+sra_ftps=( $( cat metagenomic_data_files/SRA_accession_download_numbers.txt ) )
+
+./download_SRA_files.sh ${sra_ftps[$SGE_TASK_ID]}
