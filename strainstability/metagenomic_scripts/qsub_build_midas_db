@@ -1,0 +1,19 @@
+#!/bin/bash
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output/build_midas_an_err.txt
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output/build_midas_an_out.txt
+#$ -cwd
+#$ -l h_data=20G
+#$ -l highp
+#$ -l time=330:00:00
+#$ -m bea
+
+. /u/local/Modules/default/init/modules.sh
+module load anaconda2
+. $CONDA_DIR/etc/profile.d/conda.sh
+conda activate /u/home/r/rwolff/.conda/envs/midas_testing_rtw
+module load python/2.7.15
+
+#hosts=( null ao an am )
+#host=${host[$SGE_TASK_ID]}
+host=an
+./build_midas_db.sh $host

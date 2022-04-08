@@ -1,0 +1,28 @@
+#!/bin/bash
+#$ -N merge_MIDAS_species_suez
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l highp
+#$ -l h_data=10G
+#$ -l time=23:00:00
+
+. /u/local/Modules/default/init/modules.sh
+
+module load singularity
+
+host=26
+
+export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
+
+OUTDIR=/u/project/ngarud/Garud_lab/suez_montassier/merged_midas_output/host_merged/${host}
+
+mkdir -p $OUTDIR/species
+
+singularity exec $H2_CONTAINER_LOC/MIDAS-1.3.2.sif merge_midas.py species $OUTDIR/species -i /u/home/r/rwolff/strain_stability_revisions/strainstability/metadata/host_samples/suez_${host}.txt -t file > $OUTDIR/species/species.log
+
+
+
+

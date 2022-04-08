@@ -1,9 +1,10 @@
 import pandas as pd
+from strainstability import config
 
 cd = pd.read_pickle("metagenomic_data_files/Poyet_collection_dates.pkl")
 df = pd.read_csv("metagenomic_data_files/Poyet_SRA_report.txt",sep="\t",index_col=3)
 
-hosts = ["am","an","ae","ao"]
+hosts = config.hosts
 
 df=pd.read_csv("metagenomic_data_files/Poyet_SRA_report.txt",index_col=0,sep="\t")
 df["host"] = [s[0] for s in df["sample_alias"].str.split("-")]

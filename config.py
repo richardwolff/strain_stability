@@ -1,1 +1,0 @@
-hosts = ["am","an","ae","ao"]

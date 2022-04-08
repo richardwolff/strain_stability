@@ -5,11 +5,7 @@ setup(
    version='0.1.0',
    author='Richard Wolff',
    author_email='rwolff@g.ucla.edu',
-   packages=['package_name', 'package_name.test'],
+   packages=['strainstability'],
    description='Scripts for analyzing the stability of strains',
-   long_description=open('README.txt').read(),
-   install_requires=[
-       "Django >= 1.1.1",
-       "pytest",
-   ],
+   long_description=open('README.md').read(),
 )

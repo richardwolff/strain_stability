@@ -1,0 +1,15 @@
+#!/bin/bash
+#$ -N vsearch
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l h_data=20G
+#$ -l time=23:00:00
+
+host=ao
+export PATH=$PATH:/u/project/ngarud/rwolff/vsearch-2.21.1/bin
+
+base_dir=/u/project/ngarud/rwolff/midas_isolate_db_built/${host}
+vsearch -cluster_fast ${base_dir}/cat_centroids.ffn -id .95 -threads 8 -clusters ${base_dir}/cat_clusters/cat_clusters.txt -uc ${base_dir}/uclust.95.txt
