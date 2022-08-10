@@ -1,0 +1,36 @@
+#!/bin/bash
+#$ -N MIDAS_genes_snps
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l highp
+#$ -l h_data=20G
+#$ -l time=23:00:00
+#$ -t 1-193
+
+. /u/local/Modules/default/init/modules.sh
+
+module load singularity
+module load python/2.7.15
+
+export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
+
+host=$1
+
+readarray accs < /u/home/r/rwolff/strain_stability_revisions/strainstability/metagenomic_scripts/metagenomic_data_files/${host}_samples.txt
+
+accs=(null ${accs[@]}) 
+acc=${accs[$SGE_TASK_ID]}
+echo $acc
+
+OUTDIR=/u/scratch/r/rwolff/Poyet_midas_output_spu/midas_files/${host}/${acc}
+
+fastq1=/u/scratch/r/rwolff/Poyet_fastq_files/${acc}_1.fastq.gz
+fastq2=/u/scratch/r/rwolff/Poyet_fastq_files/${acc}_2.fastq.gz
+
+species_union=/u/scratch/r/rwolff/Poyet_midas_output_spu/merged_midas_output/${host}/species_union.txt
+
+singularity exec $H2_CONTAINER_LOC/MIDAS-mod.sif run_midas.py genes $OUTDIR -1 $fastq1 -2 $fastq2 --extra_species_file $species_union --remove_temp
+singularity exec $H2_CONTAINER_LOC/MIDAS-mod.sif run_midas.py snps $OUTDIR -1 $fastq1 -2 $fastq2 --extra_species_file $species_union --remove_temp

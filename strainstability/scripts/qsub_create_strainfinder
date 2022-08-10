@@ -1,0 +1,25 @@
+#!/bin/bash                      
+#$ -S /bin/bash   
+#$ -N create_strainfinder
+#$ -o /u/scratch/r/rwolff/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l h_data=5G
+#$ -l h_rt=23:00:00                              
+#$ -t 1:27
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7.15
+
+source set_env_state.sh -c Schirmer -i H4009 -d standard
+
+source ./declare_config_named_atts.sh
+
+readarray species_list < /u/scratch/r/rwolff/Schirmer_midas_output/merged_midas_output/${DESIRED_HOST}/snps/species_snps.txt
+
+species_list=( null ${species_list[@]} )
+species=${species_list[$SGE_TASK_ID]}
+
+python create_StrainFinderInput.py --species $species -o $SF_DIR

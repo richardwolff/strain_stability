@@ -1,0 +1,25 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                           
+#$ -l mem_free=2G    
+#$ -l h_data=5G
+#$ -l h_rt=8:00:00                              
+#$ -t 1:35 
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7.15
+
+cohort=Suez
+source set_env_state.sh -c $cohort -d standard
+
+hosts=( $( ./retrieve_hosts.sh ) )
+export DESIRED_HOST=${hosts[$SGE_TASK_ID]}
+source ./declare_config_named_atts.sh
+
+mkdir ${OUTDIR}/core_genes
+
+python core_genes_utils_orig.py

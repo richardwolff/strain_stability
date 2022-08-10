@@ -1,0 +1,28 @@
+#!/bin/bash                      
+#$ -S /bin/bash   
+#$ -N postprocess_all_steps
+#$ -o /u/scratch/r/rwolff/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l h_data=10G
+#$ -l h_rt=23:00:00                              
+#$ -t 1:15
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7.15
+
+H=$1
+source set_env_state.sh -c Poyet -i $H -d standard
+
+source ./declare_config_named_atts.sh
+
+readarray species_list < /u/scratch/r/rwolff/Poyet_midas_output_spu/merged_midas_output/${DESIRED_HOST}/snps/species_snps.txt
+
+species_list=( null ${species_list[@]} )
+species=${species_list[$SGE_TASK_ID]}
+
+python postprocess_midas_data.py $species
+
+python create_StrainFinderInput.py --species $species -o $SF_DIR

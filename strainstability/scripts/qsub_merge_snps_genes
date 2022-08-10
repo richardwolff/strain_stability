@@ -1,0 +1,21 @@
+#!/bin/bash
+#$ -N merge_MIDAS_snps_genes
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l h_data=12G
+#$ -l highp
+#$ -l time=23:00:00
+#$ -t 5:112
+
+. /u/local/Modules/default/init/modules.sh
+
+module load python/2.7.15
+
+source merge_snps_genes.sh $SGE_TASK_ID
+
+
+
+

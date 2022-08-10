@@ -1,0 +1,33 @@
+#!/bin/bash
+#$ -N MIDAS_genes_snps_schirmer
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l highp
+#$ -l h_data=25G
+#$ -l time=23:00:00
+#$ -t 1-28
+
+. /u/local/Modules/default/init/modules.sh
+
+module load singularity
+module load python/2.7.15
+
+export MIDAS_DB=/u/project/ngarud/Garud_lab/midas_db_v1.2
+
+readarray accs < /u/home/r/rwolff/strain_stability_revisions/strainstability/metagenomic_scripts/metagenomic_data_files/Schirmer_samples_redownload.txt
+
+accs=(null ${accs[@]}) 
+acc=${accs[$SGE_TASK_ID]}
+echo $acc
+
+host=$( python fetch_schirmer_host.py $acc )
+OUTDIR=/u/scratch/r/rwolff/Schirmer_midas_output/midas_files/${host}/${acc}
+
+fastq1=/u/scratch/r/rwolff/Schirmer_fastq_files/${acc}_1.fastq.gz
+fastq2=/u/scratch/r/rwolff/Schirmer_fastq_files/${acc}_2.fastq.gz
+
+singularity exec $H2_CONTAINER_LOC/MIDAS-mod.sif run_midas.py genes $OUTDIR -1 $fastq1 -2 $fastq2 --remove_temp
+singularity exec $H2_CONTAINER_LOC/MIDAS-mod.sif run_midas.py snps $OUTDIR -1 $fastq1 -2 $fastq2 --remove_temp

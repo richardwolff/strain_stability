@@ -1,0 +1,51 @@
+# -*-Sh-*-       
+
+############################################################################################################
+# June 2022
+# This is a documentation/readme file for where all the scripts live and the order of analyses performed.
+############################################################################################################                        
+#### first, fastq files are downloaded from SRA
+
+qsub metagenomic_scripts/qsub_download_sra_convert_sra_to_fastq
+
+#### fastq files corresponding to samples with the same collection date are merged
+
+python metagenomic_scripts/get_repeat_date_samples.py
+
+
+#### now, process fastq's through MIDAS
+#### first, estimate species abundances
+
+qsub metagenomic_scripts/qsub_MIDAS_species am
+qsub metagenomic_scripts/qsub_MIDAS_species ao
+qsub metagenomic_scripts/qsub_MIDAS_species an
+qsub metagenomic_scripts/qsub_MIDAS_species ae
+
+#### now, call SNPs and pan-genome content
+qsub metagenomic_scripts/qsub_MIDAS_snps_genes am 
+qsub metagenomic_scripts/qsub_MIDAS_snps_genes ao 
+qsub metagenomic_scripts/qsub_MIDAS_snps_genes an 
+qsub metagenomic_scripts/qsub_MIDAS_snps_genes ae
+
+#### merge species abundances 
+
+
+#### merge snv and gene content
+
+
+#### call core genes
+
+
+#### run custom post-processing scripts
+
+
+
+#### create strain SNV files
+
+
+
+#### cluster strains
+
+
+
+#### 

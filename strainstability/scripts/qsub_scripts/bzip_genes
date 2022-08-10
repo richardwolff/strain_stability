@@ -1,0 +1,31 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output      
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l mem_free=2G               
+#$ -l h_rt=8:00:00               
+#$ -t 1-4                   
+                                   
+export H=$SGE_TASK_ID
+
+module load singularity 
+
+source ./set_env_state.sh -c Poyet -d standard
+
+hosts=( $( ./retrieve_hosts.sh ) )
+
+export DESIRED_HOST=${hosts[$H]}
+
+source ./declare_config_named_atts.sh
+
+readarray species_list<${OUTDIR}/genes/species_genes.txt
+
+for species in ${species_list[@]}; do
+    bzip2 ${OUTDIR}/genes/${species}/genes_copynum.txt
+    bzip2 ${OUTDIR}/genes/${species}/genes_depth.txt
+    bzip2 ${OUTDIR}/genes/${species}/genes_presabs.txt
+    bzip2 ${OUTDIR}/genes/${species}/genes_reads.txt
+done

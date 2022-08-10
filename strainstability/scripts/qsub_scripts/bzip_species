@@ -1,0 +1,28 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output     
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l mem_free=2G               
+#$ -l h_rt=3:00:00      
+#$ -t 1:112
+
+export H=$SGE_TASK_ID
+
+module load singularity 
+module load python/2.7.15
+
+source ./set_env_state.sh -c Poyet -d standard
+
+hosts=( $( ./retrieve_hosts.sh ) )
+
+export DESIRED_HOST=${hosts[$H]}
+
+source ./declare_config_named_atts.sh
+
+bzip2 ${OUTDIR}/species/coverage.txt
+bzip2 ${OUTDIR}/species/count_reads.txt
+bzip2 ${OUTDIR}/species/relative_abundance.txt
+bzip2 ${OUTDIR}/species/species_prevalence.txt

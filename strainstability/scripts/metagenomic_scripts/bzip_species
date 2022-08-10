@@ -1,0 +1,22 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output     
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l mem_free=2G               
+#$ -l h_rt=3:00:00      
+
+module load python/2.7.15
+
+for H in am an ae ao; do
+    source ./set_env_state.sh -c Poyet -d standard
+
+    source ./declare_config_named_atts.sh
+
+    bzip2 ${OUTDIR}/species/coverage.txt
+    bzip2 ${OUTDIR}/species/count_reads.txt
+    bzip2 ${OUTDIR}/species/relative_abundance.txt
+    bzip2 ${OUTDIR}/species/species_prevalence.txt
+done

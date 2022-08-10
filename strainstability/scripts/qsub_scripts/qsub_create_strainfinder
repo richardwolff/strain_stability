@@ -1,0 +1,25 @@
+#!/bin/bash                      
+#$ -S /bin/bash    
+#$ -N make_strainfinder_input_Suez
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                           
+#$ -l mem_free=2G    
+#$ -l h_data=5G
+#$ -l h_rt=23:00:00               
+#$ -t 1-177
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7.15
+
+#readarray hosts < /u/home/r/rwolff/strain_stability_revisions/strainstability/metadata/Suez_hosts.csv
+#hosts=( null ${hosts[@]} )
+#readarray species_list < /u/project/ngarud/Garud_lab/suez_montassier/merged_midas_output/everything/snps/species_snps.txt
+
+
+species_list=( null ${species_list[@]} )
+spec=${species_list[$SGE_TASK_ID]}
+
+for host in ${hosts[@]}; do python create_StrainFinderInput.py --species $spec -o /u/scratch/r/rwolff/strainfinder_input/Suez/$host --host $host; done

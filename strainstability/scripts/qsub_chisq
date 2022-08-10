@@ -1,0 +1,30 @@
+#!/bin/bash                      
+#$ -S /bin/bash   
+#$ -N chisq
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l highp
+#$ -l h_data=6G
+#$ -l h_rt=5:00:00                              
+
+. /u/local/Modules/default/init/modules.sh
+module load anaconda2
+
+conda activate strain_stability_env
+
+H=$1
+source set_env_state.sh -c Poyet -i $H -d standard
+
+#hosts=( $( ./retrieve_hosts.sh ) )
+
+#export DESIRED_HOST=${hosts[$SGE_TASK_ID]}
+#export DESIRED_HOST=ao
+
+source declare_config_named_atts.sh
+
+python chisq2_test.py strain
+python chisq2_test.py species
+

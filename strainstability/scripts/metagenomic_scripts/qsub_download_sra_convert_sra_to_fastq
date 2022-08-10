@@ -1,0 +1,34 @@
+#!/bin/bash
+#$ -N SRA_download_Poyet
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output/
+#$ -cwd 
+#$ -l h_data=20G
+#$ -l highp
+#$ -l time=30:00:00
+#$ -t 1:405
+
+. /u/local/Modules/default/init/modules.sh
+
+export PATH=$PATH:/u/home/r/rwolff/strain_stability_revisions/sratoolkit/bin
+
+## compile txt file of sra_ftps 
+readarray sra_ftps < metagenomic_data_files/Poyet_download_sra_ftps.txt
+sra_ftps=( null ${sra_ftps[@]} )
+ftp=${sra_ftps[$SGE_TASK_ID]}
+accession=${ftp: -10}
+tmp_store_dir=/u/scratch/r/rwolff/Poyet_sra_files
+fastq_dir=/u/scratch/r/rwolff/Poyet_fastq_files
+
+wget -P $tmp_store_dir $ftp 
+
+SRA_fpath=${tmp_store_dir}/${accession}
+
+fasterq-dump $SRA_fpath -O $fastq_dir --split-files
+
+fastq_fpath1=${fastq_dir}/${accession}_1.fastq
+fastq_fpath2=${fastq_dir}/${accession}_2.fastq
+
+gzip $fastq_fpath1 
+gzip $fastq_fpath2
+

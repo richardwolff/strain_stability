@@ -1,0 +1,29 @@
+#!/bin/bash                      
+#$ -S /bin/bash   
+#$ -N cluster_strains
+#$ -o /u/scratch/r/rwolff/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l h_data=25G
+#$ -l h_rt=23:00:00                              
+#$ -t 1:15
+
+. /u/local/Modules/default/init/modules.sh
+module load anaconda2
+
+conda activate strain_stability_env
+
+source set_env_state.sh -c Poyet -i $1 -d standard
+
+source ./declare_config_named_atts.sh
+
+species_list=$( python -c "from parse_midas_data import parse_good_species_list; print parse_good_species_list()" | tr -d '[],)' )
+
+species_list=( null ${species_list[@]} )
+species=${species_list[$SGE_TASK_ID]:1:-1}
+
+echo $species
+
+python cluster_redux2.py $species

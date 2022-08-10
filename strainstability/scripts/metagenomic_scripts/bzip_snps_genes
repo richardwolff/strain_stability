@@ -1,0 +1,32 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output     
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output    
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                           
+#$ -l h_data=3G
+#$ -l h_rt=8:00:00                              
+
+. /u/local/Modules/default/init/modules.sh
+
+module load python/2.7.15
+
+H=$1
+source ./set_env_state.sh -c Poyet -i $H -d standard
+
+source ./declare_config_named_atts.sh
+
+readarray species_list<${OUTDIR}/snps/species_snps.txt
+
+#species=${species_list[$SGE_TASK_ID]}
+#species=${species::-1}
+species=Alistipes_onderdonkii_55464
+bzip2 ${OUTDIR}snps/${species}/snps_depth.txt
+bzip2 ${OUTDIR}snps/${species}/snps_info.txt
+bzip2 ${OUTDIR}snps/${species}/snps_ref_freq.txt
+
+bzip2 ${OUTDIR}genes/${species}/genes_copynum.txt
+bzip2 ${OUTDIR}genes/${species}/genes_depth.txt
+bzip2 ${OUTDIR}genes/${species}/genes_presabs.txt
+bzip2 ${OUTDIR}genes/${species}/genes_reads.txt

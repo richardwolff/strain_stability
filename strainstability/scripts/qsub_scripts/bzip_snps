@@ -1,0 +1,35 @@
+#!/bin/bash                      
+#$ -S /bin/bash                     
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output     
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output    
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                           
+#$ -l h_data=3G
+#$ -l h_rt=8:00:00                              
+#$ -t 1:4
+
+. /u/local/Modules/default/init/modules.sh
+
+module load singularity 
+module load python/2.7.15
+
+source ./set_env_state.sh -c Poyet -d standard
+
+#hosts=( $( ./retrieve_hosts.sh ) )
+hosts=( null am an ao ae )
+export DESIRED_HOST=${hosts[$SGE_TASK_ID]}
+source ./declare_config_named_atts.sh
+
+readarray species_list<${OUTDIR}/snps/species_snps.txt
+
+for species in ${species_list[@]}; do
+    bzip2 ${OUTDIR}snps/${species}/snps_depth.txt
+    bzip2 ${OUTDIR}snps/${species}/snps_info.txt
+    bzip2 ${OUTDIR}snps/${species}/snps_ref_freq.txt
+
+    bzip2 ${OUTDIR}genes/${species}/genes_copynum.txt
+    bzip2 ${OUTDIR}genes/${species}/genes_depth.txt
+    bzip2 ${OUTDIR}genes/${species}/genes_presabs.txt
+    bzip2 ${OUTDIR}genes/${species}/genes_reads.txt
+done

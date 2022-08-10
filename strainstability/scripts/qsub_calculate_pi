@@ -1,0 +1,35 @@
+#!/bin/bash                      
+#$ -S /bin/bash   
+#$ -N calculate_pi
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output  
+#$ -e output_error_directory       
+#$ -cwd                           
+#$ -r y                           
+#$ -j y                            
+#$ -l highp
+#$ -l h_data=6G
+#$ -l h_rt=5:00:00                              
+#$ -t 86:160
+
+. /u/local/Modules/default/init/modules.sh
+module load python/2.7.15
+
+H=$1
+#source set_env_state.sh -c Poyet -i $H -d standard
+source set_env_state.sh -c HMP -i HMP -d standard
+
+source declare_config_named_atts.sh
+
+#hosts=( $( ./retrieve_hosts.sh ) )
+
+source declare_config_named_atts.sh
+readarray species_list < ${OUTDIR}/snps/species_snps.txt
+species_list=( null ${species_list[@]} )
+species=${species_list[$SGE_TASK_ID]}
+
+## here is the only place where python3 is used. Python3 has matrix multiplication w/ 
+## the @ symbol in Pandas, allowing for a significant speed-up
+
+module load anaconda3
+conda activate SLM_testing
+python calculate_Fst.py $species

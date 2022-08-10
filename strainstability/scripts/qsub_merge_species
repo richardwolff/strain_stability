@@ -1,0 +1,21 @@
+#!/bin/bash
+#$ -N merge_MIDAS_species
+#$ -e /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -o /u/home/r/rwolff/strain_stability_revisions/qsub_output
+#$ -cwd
+#$ -r y
+#$ -j y
+#$ -l highp
+#$ -l h_data=10G
+#$ -l time=2:00:00
+#$ -t 1:112
+
+. /u/local/Modules/default/init/modules.sh
+
+module load python/2.7.15
+
+source merge_species.sh $SGE_TASK_ID
+
+
+
+
